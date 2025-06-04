@@ -15,4 +15,12 @@ public interface BancosSangreService {
 
     Optional<BancosSangre> findById(Long id);
 
+    BancosSangre save(BancosSangre banco);
+
+    Optional<BancosSangre> update(BancosSangre banco, Long id);
+
+    void deleteById(Long id);
+
+    List<BancosSangre> findBancosCercanos(Double latitud, Double longitud);
+
 }

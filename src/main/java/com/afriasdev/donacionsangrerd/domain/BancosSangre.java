@@ -1,6 +1,8 @@
 package com.afriasdev.donacionsangrerd.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -17,6 +19,7 @@ public class BancosSangre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "banco_sangre_id", nullable = false)
     @JsonProperty
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
     @Size(max = 100)
@@ -51,5 +54,9 @@ public class BancosSangre {
     @Column(name = "longitud", precision = 11, scale = 8)
     @JsonProperty
     private BigDecimal longitud;
+
+    public BancosSangre() {
+        this.tipo = new TiposBanco();
+    }
 
 }

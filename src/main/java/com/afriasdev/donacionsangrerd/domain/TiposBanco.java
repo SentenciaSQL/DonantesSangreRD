@@ -17,7 +17,7 @@ public class TiposBanco {
     @Id
     @Column(name = "tipo_banco_id", nullable = false)
     @JsonProperty
-    private Integer id;
+    private Long id;
 
     @Size(max = 50)
     @Column(name = "descripcion", length = 50)

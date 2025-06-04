@@ -8,16 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Tag(name = "Gestión de Bancos de Sangre", description = "Operaciones relacionadas con bancos de sangre")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/bancos")
 public class BancosController {
@@ -46,6 +43,52 @@ public class BancosController {
             return ResponseEntity.ok(bancosSangre.orElseThrow());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("Error", "Usuario no encontrado"));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody BancosSangre banco, BindingResult result) {
+        ResponseEntity<?> errors = validation(result);
+        if (errors != null) return errors;
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(banco));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody BancosSangre banco, BindingResult result, @PathVariable Long id) {
+        ResponseEntity<?> errors = validation(result);
+        if (errors != null) return errors;
+
+        Optional<BancosSangre> bancosSangreOptional = service.update(banco, id);
+        if (bancosSangreOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(bancosSangreOptional.orElseThrow());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        Optional<BancosSangre> bancosSangreOptional = service.findById(id);
+        if (bancosSangreOptional.isPresent()) {
+            service.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/cercanos")
+    public ResponseEntity<List<BancosSangre>> findBancosCercanos(@RequestParam Double latitud, @RequestParam Double longitud) {
+        List<BancosSangre> bancosCercanos = service.findBancosCercanos(latitud, longitud);
+        return ResponseEntity.ok(bancosCercanos);
+    }
+
+    private ResponseEntity<?> validation(BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error -> {
+                errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return null;
     }
 
 }
