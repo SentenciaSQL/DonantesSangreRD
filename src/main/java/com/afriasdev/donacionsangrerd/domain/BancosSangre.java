@@ -1,5 +1,6 @@
 package com.afriasdev.donacionsangrerd.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,32 +16,40 @@ public class BancosSangre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "banco_sangre_id", nullable = false)
+    @JsonProperty
     private Integer id;
 
     @Size(max = 100)
     @Column(name = "nombre", length = 100)
+    @JsonProperty
     private String nombre;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_id")
+    @JsonProperty
     private TiposBanco tipo;
 
     @Lob
     @Column(name = "direccion")
+    @JsonProperty
     private String direccion;
 
     @Size(max = 15)
     @Column(name = "telefono", length = 15)
+    @JsonProperty
     private String telefono;
 
     @Size(max = 100)
     @Column(name = "email", length = 100)
+    @JsonProperty
     private String email;
 
     @Column(name = "latitud", precision = 10, scale = 8)
+    @JsonProperty
     private BigDecimal latitud;
 
     @Column(name = "longitud", precision = 11, scale = 8)
+    @JsonProperty
     private BigDecimal longitud;
 
 }
