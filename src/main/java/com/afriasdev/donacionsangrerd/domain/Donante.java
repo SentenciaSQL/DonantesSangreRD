@@ -1,5 +1,6 @@
 package com.afriasdev.donacionsangrerd.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,16 +18,17 @@ import java.time.LocalDate;
 public class Donante {
     @Id
     @Column(name = "donante_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;
 
     @Column(name = "peso_kg", precision = 5, scale = 2)
     private BigDecimal pesoKg;
 
+    @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tipo_sangre_id", nullable = false)

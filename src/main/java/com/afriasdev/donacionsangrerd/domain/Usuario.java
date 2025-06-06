@@ -1,7 +1,10 @@
 package com.afriasdev.donacionsangrerd.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,21 +21,25 @@ import java.util.List;
 @Table(name = "usuarios")
 public class Usuario {
     @Id
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "usuario_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    //@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "persona_id", nullable = false)
     private Persona persona;
 
-    @Size(max = 50)
-    @Column(name = "username", length = 50)
+    @Size(min = 4, max = 20)
+    @NotBlank
+    @Column(name = "username", length = 50, unique = true)
     private String username;
 
     @Size(max = 255)
-    @Column(name = "password_hash")
-    private String passwordHash;
+    @Column(name = "password")
+    private String password;
 
     @ColumnDefault("'donante'")
     @Lob
@@ -42,6 +49,14 @@ public class Usuario {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "fecha_registro")
     private Instant fechaRegistro;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean admin;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean receptor;
 
     @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @ManyToMany(fetch = FetchType.LAZY)

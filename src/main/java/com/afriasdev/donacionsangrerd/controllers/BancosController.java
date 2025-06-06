@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import static com.afriasdev.donacionsangrerd.config.Utils.getResponseEntity;
+
 @Tag(name = "Gestión de Bancos de Sangre", description = "Operaciones relacionadas con bancos de sangre")
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -81,14 +83,7 @@ public class BancosController {
     }
 
     private ResponseEntity<?> validation(BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> {
-                errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
-            });
-            return ResponseEntity.badRequest().body(errors);
-        }
-        return null;
+        return getResponseEntity(result);
     }
 
 }

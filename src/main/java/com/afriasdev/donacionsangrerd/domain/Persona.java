@@ -1,8 +1,9 @@
 package com.afriasdev.donacionsangrerd.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,23 +15,35 @@ import java.time.LocalDate;
 @Table(name = "personas")
 public class Persona {
     @Id
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "persona_id", nullable = false)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty
+    private Long id;
 
     @Size(max = 13)
     @NotNull
     @Column(name = "cedula", nullable = false, length = 13)
+    @JsonProperty
     private String cedula;
 
     @Size(max = 100)
-    @Column(name = "nombre_completo", length = 100)
-    private String nombreCompleto;
+    @Column(name = "nombre", length = 100)
+    @NotBlank
+    @JsonProperty
+    private String nombre;
+
+    @Column(name = "apellido", length = 100)
+    @NotBlank
+    @JsonProperty
+    private String apellido;
 
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "sexo")
-    private Character sexo;
+    @Pattern(regexp = "^[MF]$", message = "El sexo debe ser 'M' o 'F'")
+    @Column(name = "sexo", length = 1)
+    private String sexo;
 
     @Lob
     @Column(name = "direccion")
@@ -41,7 +54,9 @@ public class Persona {
     private String telefono;
 
     @Size(max = 100)
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, unique = true)
+    @NotEmpty
+    @Email
     private String email;
 
 }
